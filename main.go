@@ -71,9 +71,7 @@ func newPostHandler(context *gin.Context) {
 	context.String(http.StatusBadRequest, "Bad Request")
 }
 
-func main() {
-	setupDatabase(databaseName)
-
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 	// Load up all the templates.
 	router.LoadHTMLGlob("templates/*")
@@ -82,5 +80,12 @@ func main() {
 	router.GET("/", newHandler)
 	router.POST("/", newPostHandler)
 
+	return router
+}
+
+func main() {
+	setupDatabase(databaseName)
+
+	router := setupRouter()
 	router.Run()
 }
