@@ -1,12 +1,16 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
 	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/assert"
 )
 
+// Test that database is setup properly.
 func TestSetupDatabase(t *testing.T) {
 	databaseName := "test.db"
 	// First, we setup the database.
@@ -36,4 +40,20 @@ func TestSetupDatabase(t *testing.T) {
 	// Cleanup the database.
 	os.Remove(databaseName)
 
+}
+
+// Test Index page handler.
+func TestIndexPage(t *testing.T) {
+	databaseName := "test.db"
+	setupDatabase(databaseName)
+
+	router := setupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+
+	os.Remove(databaseName)
 }
