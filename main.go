@@ -14,9 +14,8 @@ var databaseName = "golinks.db"
 type Link struct {
 	gorm.Model
 	Short string `form:"short"`
-	Url string `form:"url"`
+	Url   string `form:"url"`
 }
-
 
 func setupDatabase(databaseName string) {
 	// Setup the database first and migrate the model.
@@ -29,7 +28,6 @@ func setupDatabase(databaseName string) {
 	db.AutoMigrate(&Link{})
 	db.Close()
 }
-
 
 func handleGet(context *gin.Context) {
 	short := context.Param("short")
@@ -49,10 +47,9 @@ func handleGet(context *gin.Context) {
 	context.Redirect(http.StatusMovedPermanently, link.Url)
 }
 
-
 func newHandler(context *gin.Context) {
 	context.HTML(http.StatusOK, "create.tmpl", map[string]string{
-		"action":"/new",
+		"action": "/new",
 	})
 }
 
