@@ -9,24 +9,14 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var databaseName = "golinks.db"
+const databaseName = "golinks.db"
+const port = ":8080"
 
+// Link is the struct that holds the structure of how information has to be stored
 type Link struct {
 	gorm.Model
 	Short string `form:"short"`
 	Url   string `form:"url"`
-}
-
-func setupDatabase(databaseName string) {
-	// Setup the database first and migrate the model.
-	db, err := gorm.Open("sqlite3", databaseName)
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	// Migrate the schema
-	db.AutoMigrate(&Link{})
-	db.Close()
 }
 
 func handleGet(context *gin.Context) {
@@ -67,7 +57,7 @@ func newPostHandler(context *gin.Context) {
 		context.String(http.StatusOK, "Created")
 		return
 	}
-
+	log.Fatalf("The link couldn't be created: %v\n", err)
 	context.String(http.StatusBadRequest, "Bad Request")
 }
 
@@ -84,8 +74,14 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	setupDatabase(databaseName)
-
+	// Setup the database first and migrate the model.
+	db, err := gorm.Open("sqlite3", databaseName)
+	if err != nil {
+		panic("failed to connect database")
+	}
+	// Migrate the schema
+	db.AutoMigrate(&Link{})
+	defer db.Close()
 	router := setupRouter()
-	router.Run()
+	router.Run(port)
 }

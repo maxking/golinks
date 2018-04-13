@@ -7,20 +7,11 @@ meant for my personal use and you are more than welcome to use it too.
 Build
 =====
 
-First, you need to setup all your dependencies to compile this program. I am not
-most familiar with Golang tooling, I am going to just use the one provided by Golang.
-
-```bash
-$ go get -u github.com/mattn/go-sqlite3
-$ go get -u github.com/jinzhu/gorm
-$ go get -u github.com/gin-gonic/gin
-```
-
 After you have downloaded all the dependencies, you can now build and run it.
 
 ```bash
-$ git clone https://github.com/maxking/golinks
-$ cd golinks
+$ got get github.com/maxking/golinks
+$ cd $GOPATH/src/maxking/golinks
 $ go build
 ```
 
