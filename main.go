@@ -10,6 +10,7 @@ import (
 )
 
 const databaseName = "golinks.db"
+const port = ":8080"
 
 // Link is the struct that holds the structure of how information has to be stored
 type Link struct {
@@ -82,5 +83,5 @@ func main() {
 	db.AutoMigrate(&Link{})
 	defer db.Close()
 	router := setupRouter()
-	router.Run()
+	router.Run(port)
 }
