@@ -61,7 +61,7 @@ func newPostHandler(context *gin.Context) {
 	}
 	defer db.Close()
 
-	if err := context.ShouldBind(&form); err == nil {
+	if err := context.Bind(&form); err == nil {
 		db.Create(&form)
 		log.Printf("New Golink created: %s -> %s", form.Short, form.Url)
 		context.String(http.StatusOK, "Created")
@@ -75,7 +75,6 @@ func setupRouter() *gin.Engine {
 	router := gin.Default()
 	// Load up all the templates.
 	router.LoadHTMLGlob("templates/*")
-
 	router.GET("/:short", handleGet)
 	router.GET("/", newHandler)
 	router.POST("/", newPostHandler)
