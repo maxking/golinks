@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -62,6 +63,12 @@ func newPostHandler(context *gin.Context) {
 	defer db.Close()
 
 	if err := context.Bind(&form); err == nil {
+		if form.Short == ""  || form.Url == "" {
+			// Empty short link.
+			context.String(http.StatusBadRequest,
+				fmt.Sprintf("Bad parameters short=%s url=%s", form.Short, form.Url))
+			return
+		}
 		db.Create(&form)
 		log.Printf("New Golink created: %s -> %s", form.Short, form.Url)
 		context.String(http.StatusOK, "Created")
