@@ -12,6 +12,7 @@ import (
 
 var databaseName = "golinks.db"
 
+// Link represents a data structure that will be used to store the mapping from large to short URLs.
 type Link struct {
 	gorm.Model
 	Short string `form:"short"`
@@ -63,7 +64,7 @@ func newPostHandler(context *gin.Context) {
 	defer db.Close()
 
 	if err := context.Bind(&form); err == nil {
-		if form.Short == ""  || form.Url == "" {
+		if form.Short == "" || form.Url == "" {
 			// Empty short link.
 			context.String(http.StatusBadRequest,
 				fmt.Sprintf("Bad parameters short=%s url=%s", form.Short, form.Url))
