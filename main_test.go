@@ -3,7 +3,9 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -56,4 +58,35 @@ func TestIndexPage(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 
 	os.Remove(databaseName)
+}
+
+// Create and test redirection.
+func TestRedict(t *testing.T) {
+	databaseName := "test.db"
+	setupDatabase(databaseName)
+
+	router := setupRouter()
+	w := httptest.NewRecorder()
+
+	data := url.Values{}
+	data.Set("short", "link")
+	data.Add("url", "http://example.com")
+
+	// First, let's create a new URL
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(data.Encode()))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, "Created", w.Body.String())
+
+	// Setup a new recorder for redirect.
+	w2 := httptest.NewRecorder()
+	// Now, let's make sure that redirection also works.
+	req, _ = http.NewRequest("GET", "/link", nil)
+	router.ServeHTTP(w2, req)
+
+	assert.Equal(t, 301, w2.Code)
+	assert.Equal(t, "http://example.com", w2.HeaderMap)
+
 }
