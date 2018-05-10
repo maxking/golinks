@@ -70,6 +70,15 @@ func newPostHandler(context *gin.Context) {
 				fmt.Sprintf("Bad parameters short=%s url=%s", form.Short, form.Url))
 			return
 		}
+
+		// If the short is already set in the database, return an error.
+		var link Link
+		err = db.Where("short = ?", form.Short).First(&link).Error
+		if err == nil {
+			context.String(http.StatusConflict, fmt.Sprintf("URL already exists and points to %s", link.Url))
+			return
+		}
+
 		db.Create(&form)
 		log.Printf("New Golink created: %s -> %s", form.Short, form.Url)
 		context.String(http.StatusOK, "Created")
